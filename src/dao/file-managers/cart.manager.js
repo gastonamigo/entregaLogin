@@ -1,36 +1,140 @@
-import fs from "fs";
-import __dirname from "../../utils.js";
-import { getNextId } from "./utils.js";
+class CartManager {
+  #path = ""
 
-const path = __dirname + "/dao/file-managers/files/carts.json";
-
-export default class CartCartManager {
-  constructor() {
-    console.log("Working with carts using filesystem");
+  constructor(path){
+      this.#path = path
   }
 
-  getAll = async () => {
-    if (fs.existsSync(path)) {
-      const data = await fs.promises.readFile(path, "utf-8");
+  async getCarts(){
+      try{
+          let carts = await fs.promises.readFile(this.#path, "utf-8")
+          return JSON.parse(carts)
+      }catch(err){
+          return []
+      }
+  }
 
-      return JSON.parse(data);
-    }
+  async getIDs(){
+      let carts = await this.getCarts()
+      const ids = carts.map(c => c.id)
+      let mayorID = Math.max(...ids)
+      if (mayorID === -Infinity) {
+          return 0
+      } else {
+          return ++mayorID
+      }
+  }
 
-    return [];
-  };
+  async addCart(){
+      try{
+          let carts = await this.getCarts()
+          let mayorID = await this.getIDs()
+          const cart = {
+              id: mayorID,
+              products: []
+          }
 
-  create = async (cart) => {
-    const carts = await this.getAll();
+          carts = [...carts, cart]
 
-    const newCart = {
-      ...cart,
-      id: getNextId(carts),
-    };
+          await fs.promises.writeFile(this.#path, JSON.stringify(carts))
+      }catch(err){
+          throw new Error(err)
+      }
+  }
 
-    const updatedCarts = [...carts, newCart];
+  async getCartProducts(id){
+      let carts = await this.getCarts()
+      let cart = carts.find( c => c.id === id)
+      if (cart){
+          return cart
+      } else {
+          throw new Error("No se encontró carrito con ese ID.")
+      }
+  }
 
-    await fs.promises.writeFile(path, JSON.stringify(updatedCarts));
+  async addProductToCart(prod, cartID){
+      try{
+          let carts = await this.getCarts()
+          let cart = await this.getCartProducts(cartID)
 
-    return newCart;
-  };
+          //Verifico si el producto existe en el carrito
+          let prodInCart = cart.products.find( p => p.id === prod.id)
+
+          if (prodInCart){
+              prodInCart.quantity += 1
+              let filterProducts = cart.products.filter( p => p.id !== prodInCart.id) 
+              filterProducts = [
+                  ...filterProducts,
+                  prodInCart
+              ]
+              cart.products = filterProducts
+              let newCarts = carts.filter( c => c.id !== cartID)
+              newCarts = [
+                  ...newCarts,
+                  cart
+              ]
+              await fs.promises.writeFile(this.#path, JSON.stringify(newCarts))
+          } else {
+              cart.products = [
+                  ...cart.products,
+                  {
+                      id: prod.id,
+                      quantity: 1
+                  }
+              ]
+              let newCarts = carts.filter( c => c.id !== cartID)
+              newCarts = [
+                  ...newCarts,
+                  cart
+              ]
+              await fs.promises.writeFile(this.#path, JSON.stringify(newCarts))
+          }
+          
+      }catch(err){
+          throw new Error(err)
+      }
+  }
+
+  async deleteProductInCart(cartID, productID){
+      try{
+          let carts = await this.getCarts()
+          let cart = await this.getCartProducts(cartID)
+
+          let prodInCart = cart.products.find( p => p.id === productID)
+
+          if(!prodInCart){
+              throw new Error("No existe producto con ese ID en este carrito.")
+          }
+
+          if (prodInCart.quantity > 1){
+              prodInCart.quantity -= 1
+              let filterProducts = cart.products.filter( p => p.id !== prodInCart.id) 
+              filterProducts = [
+                  ...filterProducts,
+                  prodInCart
+              ]
+              cart.products = filterProducts
+              let newCarts = carts.filter( c => c.id !== cartID)
+              newCarts = [
+                  ...newCarts,
+                  cart
+              ]
+              await fs.promises.writeFile(this.#path, JSON.stringify(newCarts))
+          } else {
+              let newCartProducts = cart.products.filter(p => p.id !== productID)
+              cart.products = newCartProducts
+              let newCarts = carts.filter( c => c.id !== cartID)
+              newCarts = [
+                  ...newCarts,
+                  cart
+              ]
+              await fs.promises.writeFile(this.#path, JSON.stringify(newCarts))
+          }
+
+      }catch(err){
+          throw new Error(err)
+      }
+  }
 }
+
+export default CartManager

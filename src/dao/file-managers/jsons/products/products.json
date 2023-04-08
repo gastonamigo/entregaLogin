@@ -1,0 +1,58 @@
+[
+    {
+        "id": 1,
+        "title": "Ender 3 v2",
+        "description": "Impresora 3d v2",
+        "price": 155000,
+        "thumbnails": "../img/ender-3-V2-01.jpg",
+        "code": "E01",
+        "stock": 15,
+        "status": true,
+        "category": "FDM"
+
+    },
+    {
+        "id": 2,
+        "title": "Ender 2 pro",
+        "description": "Impresora 3d pro",
+        "price": 145000,
+        "thumbnails": "../img/ender2pro1.png",
+        "code": "E02",
+        "stock": 15,
+        "status": true,
+        "category": "FDM"
+    },
+    {
+        "id": 3,
+        "title": "Cr10 pro v2",
+        "description": "Impresora 3d cr10 V2",
+        "price": 195000,
+        "thumbnails": "../img/creality-cr-10-smart-pro-1.jpg",
+        "code": "E03",
+        "stock": 15,
+        "status": true,
+        "category": "FDM"
+    },
+    {
+        "id": 4,
+        "title": "Cr5 pro",
+        "description": "Impresora 3d cr5 pro",
+        "price": 225000,
+        "thumbnails": "../img/cr5pro1.jpg",
+        "code": "E04",
+        "stock": 15,
+        "status": true,
+        "category": "FDM"
+    },
+    {
+        "id": 5,
+        "title": "Photon mono x",
+        "description": "Impresora de resina Mono X 4K",
+        "price": 225000,
+        "thumbnails": "../img/MonoX.jpg",
+        "code": "E05",
+        "stock": 15,
+        "status": true,
+        "category": "resina"
+    }
+]

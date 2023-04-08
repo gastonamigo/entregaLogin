@@ -1,21 +1,32 @@
-import { Router } from "express";
-import { CartManager } from "../dao/index.js";
-import { ProductManager } from "../dao/index.js";
+import { json, Router } from "express";
+import { manager } from "../app.js";
 
-const router = Router();
-const ProductsManager = new ProductManager();
-const CartsManager = new CartManager();
+const viewsRouter = Router();
 
-router.get("/products", async (req, res) => {
-  const products = await ProductsManager.getAll();
+// Middleware para parsear JSON en cada solicitud
+viewsRouter.use(json());
 
-  res.render("products", { products });
+viewsRouter.get("/", async (request, response) => {
+  try {
+    const products = await manager.getProducts();
+    const viewExists = // Verificar si la vista existe
+    response.render("home", { products });
+  } catch (error) {
+    response.status(500).send({ status: "error", error: `${error}` });
+  }
 });
 
-router.get("/carts", async (req, res) => {
-  const carts = await CartsManager.getAll();
-
-  res.render("carts", { carts });
+viewsRouter.get("/real-time-products-view", async (request, response) => {
+  try {
+    const products = await manager.getProducts();
+    response.render("real-time-products-view", { products });
+  } catch (error) {
+    response.status(500).send({ status: "error", error: `${error}` });
+  }
 });
 
-export default router;
+viewsRouter.get("/chat", async (request, response) => {
+  response.render("chat");
+});
+
+export default viewsRouter;

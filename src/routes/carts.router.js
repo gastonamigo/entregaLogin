@@ -1,40 +1,47 @@
-import { Router } from "express";
-import { CartManager } from "../dao/index.js";
+import express from 'express';
+import { cartManager, manager } from '../app.js';
 
-const router = Router();
-const cartManager = new CartManager();
+const router = express.Router();
 
-router.get("/", async (req, res) => {
-  const carts = await cartManager.getAll();
-
-  res.send(carts);
-});
-
-router.post("/", async (req, res) => {
-  const { title, description, teacher } = req.body;
-
-  if (!title || !description || !teacher) {
-    return res
-      .status(400)
-      .send({ status: "error", payload: "Missing parameters" });
+router.post('/', async (req, res) => {
+  try {
+    await cartManager.addCart();
+    res.json({ status: 'success', message: 'Carrito añadido.' });
+  } catch (error) {
+    res.status(404).json({ status: 'error', error: `${error}` });
   }
-
-  const result = await cartManager.create({
-    title,
-    description,
-    teacher,
-    students: [],
-  });
-
-  res.status(201).send({ status: "ok", payload: result });
 });
 
-router.post("/:courseId/:userId", async (req, res) => {
-  const { cartId, productId } = req.params;
+router.get('/:cid', async (req, res) => {
+  try {
+    const { cid } = req.params;
+    const cart = await cartManager.getCartProducts(cid);
+    res.json({ status: 'success', payload: cart });
+  } catch (error) {
+    res.status(404).json({ status: 'error', error: `${error}` });
+  }
+});
 
-  const result = await cartManager.addStudent(cartId, productId);
+router.post('/:cid/products/:pid', async (req, res) => {
+  try {
+    const { cid, pid } = req.params;
+    const product = await manager.getProductById(pid);
+    await cartManager.addProductToCart(product, cid);
+    const cartProducts = await cartManager.getCartProducts(cid);
+    res.json({ status: 'success', payload: cartProducts });
+  } catch (error) {
+    res.status(404).json({ status: 'error', error: `${error}` });
+  }
+});
 
-  res.send({ status: "ok", payload: result });
+router.delete('/:cid/products/:pid', async (req, res) => {
+  try {
+    const { cid, pid } = req.params;
+    await cartManager.deleteProductInCart(cid, pid);
+    res.json({ status: 'success', message: 'Producto eliminado.' });
+  } catch (error) {
+    res.status(404).json({ status: 'error', error: `${error}` });
+  }
 });
 
 export default router;
