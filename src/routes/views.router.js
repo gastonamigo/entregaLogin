@@ -8,8 +8,8 @@ viewsRouter.use(json());
 
 viewsRouter.get("/", async (req, response) => {
   try {
-    const { limit, page } = req.query
-    const products = await manager.getProducts({limit, page})
+    const { limit, page, sort } = req.query
+    const products = await manager.getProducts({limit, page, sort})
     response.render("home", { products });
   } catch (error) {
     response.status(500).send({ status: "error", error: `${error}` });

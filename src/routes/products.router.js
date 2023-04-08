@@ -7,9 +7,9 @@ productsRouter.use(json())
 
 productsRouter.get("/", async (req, res) => {
   try {
-    const { limit, page } = req.query
-    const products = await manager.getProducts({limit, page})
-    
+    const { limit, page, sort} = req.query
+    const products = await manager.getProducts({limit, page, sort})
+   
     res.status(200).json({ status: "success", payload: products })
   } catch (err) {
     res.status(500).json({ status: "error", error: `${err}` })

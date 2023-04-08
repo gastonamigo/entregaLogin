@@ -3,24 +3,18 @@ import producModel from "../models/product.model.js";
 export default class ProductManager {
     constructor() {"Working with DB."}
 
-    // titleOfProducts(str){
-    //     const words = str.split("-")
-    //     const wordsToUpperCase = words.map(w => w[0].toUpperCase() + w.slice(1))
-    //     const newTitle = wordsToUpperCase.join(" ")
-    //     return newTitle
-    // }
-
+   
     async getProducts({page, limit, sort, query}) {
         try {
              let newQuery = {}
        
-            let newSort
+              
             if (sort === "asc") {
                 sort = { price: "asc" }
-                newSort = "asc"
+                 
             } else if (sort === "desc") {
                 sort = { price: "desc" }
-                newSort = "desc"
+                 
             }
 
             const products = await producModel.paginate(
@@ -29,11 +23,10 @@ export default class ProductManager {
                     limit: limit || 3,
                     lean: true,
                     page: page || 1,
-                    sort: newSort || null
+                    sort: sort || null
                 }
             );
             
-            if (newSort) products.sort = newSort;
             
             return products;
         } catch (err) {
