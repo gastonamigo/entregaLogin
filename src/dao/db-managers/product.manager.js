@@ -3,31 +3,17 @@ import producModel from "../models/product.model.js";
 export default class ProductManager {
     constructor() {"Working with DB."}
 
-    titleOfProducts(str){
-        const words = str.split("-")
-        const wordsToUpperCase = words.map(w => w[0].toUpperCase() + w.slice(1))
-        const newTitle = wordsToUpperCase.join(" ")
-        return newTitle
-    }
+    // titleOfProducts(str){
+    //     const words = str.split("-")
+    //     const wordsToUpperCase = words.map(w => w[0].toUpperCase() + w.slice(1))
+    //     const newTitle = wordsToUpperCase.join(" ")
+    //     return newTitle
+    // }
 
-    async getProducts(page, limit, sort, query) {
+    async getProducts({page, limit, sort, query}) {
         try {
-            let newQuery
-            if (query.title && query.stock){
-                let newTitle = this.titleOfProducts(query.title)
-                newQuery = {
-                    title: newTitle,
-                    stock: query.stock
-                }
-            } else if (query.title && !query.stock){
-                let newTitle = this.titleOfProducts(query.title)
-                newQuery = {title: newTitle}
-            } else if (!query.title && query.stock){
-                newQuery = {stock: query.stock}
-            } else {
-                newQuery = {}
-            }
-
+             let newQuery = {}
+       
             let newSort
             if (sort === "asc") {
                 sort = { price: "asc" }
@@ -40,14 +26,16 @@ export default class ProductManager {
             const products = await producModel.paginate(
                 newQuery,
                 {
-                    limit: limit ?? 10,
+                    limit: limit || 3,
                     lean: true,
-                    page: page ?? 1,
-                    sort: sort ?? "null"
+                    page: page || 1,
+                    sort: newSort || null
                 }
-            )
-            if (sort) products.sort = newSort
-            return products
+            );
+            
+            if (newSort) products.sort = newSort;
+            
+            return products;
         } catch (err) {
             console.log(err)
             return []
