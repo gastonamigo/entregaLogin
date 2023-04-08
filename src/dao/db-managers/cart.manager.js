@@ -2,7 +2,7 @@ import CartModel from "../models/cart.model.js"
 
 export default class CartManager {
     constructor() {
-        console.log("Working with DB system.")
+        console.log("Working with DB")
     }
 
     async getCarts() {

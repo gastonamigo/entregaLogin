@@ -1,9 +1,7 @@
 import producModel from "../models/product.model.js";
 
 export default class ProductManager {
-    constructor() {
-        "Working with DB system."
-    }
+    constructor() {"Working with DB."}
 
     titleOfProducts(str){
         const words = str.split("-")
@@ -56,7 +54,7 @@ export default class ProductManager {
         }
     }
 
-    async addProduct(title, description, price, thumbail, code, stock, status, category) {
+    async addProduct({title, description, price, thumbail, code, stock, status, category}) {
 
         code = Math.floor(Math.random() * 100000000000)
 
@@ -71,9 +69,12 @@ export default class ProductManager {
                 status,
                 category
             }
+           
             const result = await producModel.create(product)
+            
             return result
         } catch (err) {
+            
             throw new Error(err.message)
         }
     }

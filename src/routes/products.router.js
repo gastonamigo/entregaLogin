@@ -41,8 +41,8 @@ productsRouter.post("/", async (req, res) => {
       code,
       stock,
       category,
-      thumbail = "default",
-      status = "active"
+      thumbail = [],
+      status = true
     } = req.body
 
     const newProduct = {
@@ -55,10 +55,13 @@ productsRouter.post("/", async (req, res) => {
       thumbail,
       status
     }
+   
 
-    const addedProduct = await manager.addProduct(newProduct)
+  
+    const addedProduct = await manager.addProduct(newProduct);
 
     req.io.emit("new-product", addedProduct)
+    
 
     res.status(201).json({ status: "success", payload: addedProduct })
   } catch (err) {
