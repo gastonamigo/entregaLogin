@@ -20,7 +20,7 @@ export default class ProductManager {
             const products = await producModel.paginate(
                 newQuery,
                 {
-                    limit: limit || 3,
+                    limit: limit || 10,
                     lean: true,
                     page: page || 1,
                     sort: sort || null

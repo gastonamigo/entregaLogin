@@ -1,9 +1,23 @@
-<h1>{{title}}</h1>
+<h1>List of products</h1>
+
 <ul>
-    <li style="font-size: 1.5rem;">{{description}}</li>
-    <li style="font-size: 1.5rem;">Categoría: {{category}}</li>
-    <li style="font-size: 1.5rem;">$ {{price}}</li>
-    <li style="font-size: 1.5rem;">Stock: {{stock}}</li>
+  {{#each products.payload}}
+    <br />
+    <div>
+      <h2><li>Title: {{title}}</li></h2>
+      <p><li> Description: {{description}}</li></p>
+      <span><li>Price:</span> {{price}}</li></span>
+    </div>
+    <br />
+  {{/each}}
 </ul>
 
-<button>Add to Cart</button>
+<div>
+ {{#if products.hasPrevPage}}
+        <a href="http://localhost:8080/products?page={{products.prevPage}}">Anterior</a>
+        {{/if}}
+        <span>Página {{products.page}} de {{products.totalPages}}</span>
+        {{#if products.hasNextPage}}
+        <a href="http://localhost:8080/products?page={{products.nextPage}}">Siguiente</a>
+        {{/if}}
+</div>
