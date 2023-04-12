@@ -29,4 +29,35 @@ viewsRouter.get("/chat", async (req, response) => {
   response.render("chat");
 });
 
+viewsRouter.get("/login",(req,res)=>{
+  res.render("login");
+});
+
+viewsRouter.get("/signup",(req,res)=>{
+  res.render("registro");
+});
+
+viewsRouter.get("/profile",(req,res)=>{
+  console.log(req.session);
+  const userData= req.session;
+  res.render("profile", {userData});
+});
+viewsRouter.get("/products", authenticate, async (req,res) =>{
+  console.log(`esto se ve desde prods${req.session.user}`);
+  const {page} =req.query;
+  const prods = await  productModel.paginate(
+      {},{limit: 10, lean:true, page: page??1}
+  );
+  const userData = req.session.user;
+  res.render("products", {prods, userData});
+});
+async function authenticate(req, res, next) {
+  console.log(`esto se ve desde midd ${req.session.rol}`);
+  if (req.session.rol === "admin") {
+      return next();
+    }else{
+      res.send("no tienes acceso, esta es un area solo para admin");
+    }
+}
+
 export default viewsRouter;
