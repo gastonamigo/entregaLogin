@@ -42,6 +42,12 @@ viewsRouter.get("/profile",(req,res)=>{
   const userData= req.session;
   res.render("profile", {userData});
 });
+viewsRouter.get("/", async (req,res) =>{
+  const prods = await productModel.paginate();
+  console.log(prods);
+  res.render("index", {prods});
+})
+//todos los productos
 viewsRouter.get("/products", authenticate, async (req,res) =>{
   console.log(`esto se ve desde prods${req.session.user}`);
   const {page} =req.query;
@@ -50,7 +56,8 @@ viewsRouter.get("/products", authenticate, async (req,res) =>{
   );
   const userData = req.session.user;
   res.render("products", {prods, userData});
-});
+})
+//middle se aut
 async function authenticate(req, res, next) {
   console.log(`esto se ve desde midd ${req.session.rol}`);
   if (req.session.rol === "admin") {
