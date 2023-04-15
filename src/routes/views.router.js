@@ -1,6 +1,6 @@
 import { json, Router } from "express";
 import { manager } from "../app.js";
-
+import productModel from "../dao/models/product.model.js";
 const viewsRouter = Router();
 
 // Middleware para parsear JSON en cada solicitud

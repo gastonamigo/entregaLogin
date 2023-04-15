@@ -21,7 +21,7 @@ AuthRouter.post("/signup", async(req, res)=>{
         req.session.rol = email === ADMIN_EMAIL ? "admin" : "user";
         console.log(req.session);
 
-        return res.redirect("/products");
+        return res.redirect("/");
     } catch (error) {
         console.log(error);
         return res.status(500).send("Error interno del servidor");
@@ -43,7 +43,7 @@ AuthRouter.post("/login", async (req,res) => {
         req.session.rol = email === ADMIN_EMAIL ? "admin" : "user";
         console.log(req.session);
 
-        return res.redirect("/products");
+        return res.redirect("/");
     } catch (error) {
         console.log(error);
         return res.status(500).send("Error interno del servidor");
