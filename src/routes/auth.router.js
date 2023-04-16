@@ -35,19 +35,19 @@ AuthRouter.post("/login", async (req, res) => {
     const user = await UserModel.findOne({ email: email });
     
     if (user) {
-      req.session.user = user.email;
-
+      
       if (password == user.password) {
+        req.session.user = user.email;
         return res.redirect("/products");
       } else {
-        res.send(`Contraseña incorrecta <a href="/">Intentar de nuevo</a>`);
+        res.send(`Contraseña incorrecta <a href="/login">Intentar de nuevo</a>`);
       }
     } else {
       //si no existe el usuario
       if (!email) {
-        res.send(`Debe ingresar un correo electrónico <a href="/">Intentar de nuevo</a>`);
+        res.send(`Debe ingresar un correo electrónico <a href="/login">Intentar de nuevo</a>`);
       } else {
-        res.send(`Usuario no encontrado <a href="/users/registro">Registrarte</a>`);
+        res.send(`Usuario no encontrado <a href="/users/registro">Registrarte</a>o Volver a <a href="/login">loguearte</a>`);
       }
     }
   } catch (error) {
