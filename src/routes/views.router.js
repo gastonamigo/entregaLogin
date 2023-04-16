@@ -1,6 +1,7 @@
 import { json, Router } from "express";
 import { manager } from "../app.js";
 import productModel from "../dao/models/product.model.js";
+import { UserModel } from "../dao/models/user.model.js";
 const viewsRouter = Router();
 
 // Middleware para parsear JSON en cada solicitud
@@ -29,42 +30,52 @@ viewsRouter.get("/chat", async (req, response) => {
   response.render("chat");
 });
 
-viewsRouter.get("/login",(req,res)=>{
-  res.render("login");
-});
+// viewsRouter.get("/login",(req,res)=>{
+//   res.render("login");
+// });
 
-viewsRouter.get("/signup",(req,res)=>{
-  res.render("registro");
-});
+// viewsRouter.get("/signup",(req,res)=>{
+//   res.render("registro");
+// });
 
-viewsRouter.get("/profile",(req,res)=>{
-  console.log(req.session);
-  const userData= req.session;
-  res.render("profile", {userData});
-});
-viewsRouter.get("/", async (req,res) =>{
-  const prods = await productModel.paginate();
-  console.log(prods);
-  res.render("index", {prods});
-})
+// viewsRouter.get("/profile",(req,res)=>{
+//   console.log(req.session);
+//   const userData= req.session;
+//   res.render("profile", {userData});
+// });
+// viewsRouter.get("/", async (req,res) =>{
+//   const prods = await productModel.paginate();
+//   console.log(prods);
+//   res.render("home", {prods});
+// })
 //todos los productos
-viewsRouter.get("/products", authenticate, async (req,res) =>{
-  console.log(`esto se ve desde prods${req.session.user}`);
-  const {page} =req.query;
-  const prods = await  productModel.paginate(
-      {},{limit: 10, lean:true, page: page??1}
-  );
-  const userData = req.session.user;
-  res.render("products", {prods, userData});
-})
-//middle se aut
-async function authenticate(req, res, next) {
-  console.log(`esto se ve desde midd ${req.session.rol}`);
-  if (req.session.rol === "admin") {
-      return next();
-    }else{
-      res.send("no tienes acceso, esta es un area solo para admin");
-    }
-}
+// viewsRouter.get("/products",/* authenticate, */async (req,res) =>{
+//   // 
+//   const usuario = req.session.user;
+//   let userDatos = await UserModel.findOne({ email: usuario });
+//   let rol;
+
+//   /* Verificar si es Admin o Usuario */
+//   const emailEntrada = usuario
+//   let email = emailEntrada.toLowerCase()
+//   const isAdmin = /admin/.test(email);
+
+//   if (isAdmin) {
+//     rol = "Admin";
+//   } else {
+//     rol = "Usuario";
+//   }
+//   userDatos = { ...userDatos, rol };
+//   const products = await productModel.paginate(
+//     {},
+//     {
+//       limit: 5,
+//       lean: true,
+//     }
+//   );
+
+//   res.render("products", { products, userDatos });
+// })
+//
 
 export default viewsRouter;

@@ -1,4 +1,14 @@
 <h1>profile</h1>
-<h2>{{userData.user}}</h2>
-<h3>Rol:{{userData.rol}}</h3>
-<a href="/api/sessions/logout">Cerrar Sesion</a>
+<div>
+    <ul>
+        <li>Nombre: {{user._doc.first_name}}</li>
+        <li>Apellido: {{user._doc.last_name}}</li>
+        <li>Email: {{user._doc.email}}</li>
+        <li>Edad: {{user._doc.age}}</li>
+        <li>Rol: {{user.rol}}</li>
+    </ul>
+</div>
+<div>
+<form method="get" action="/session/users/logout">
+    <button type="submit">Cerrar Sesion</button>
+</form>

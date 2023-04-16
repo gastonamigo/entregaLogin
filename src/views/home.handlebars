@@ -1,26 +1,32 @@
-<div>
-    <h1>Productos:</h1>
 
+    <h1>Producto</h1>
+    <a href="/profile">Perfil</a>
+    <a href="/api/sessions/users/logout">Cerrar sesion</a>
+</div>
+<div>
+    <h1>Products</h1>
     <ul>
         {{#each products.docs}}
-        <li>
+        
+         <li>
             <p><b>{{this.title}}</b></p>
             <p>Precio: ${{this.price}}</p>
             <p>Stock: {{this.stock}}</p>
             <p>Categoría: {{this.category}}</p>
-            <button><a href="/product/{{this._id}}">Add to Cart</a></button>
+            <button><a href="/products/{{this._id}}">Add to Cart</a></button>
         </li>
         {{/each}}
     </ul>
-
+    
     <div>
         {{#if products.hasPrevPage}}
-        <a href="/?page={{products.prevPage}}">Anterior</a>
-        {{/if}}
-        <span>Página {{products.page}} de {{products.totalPages}}</span>
-        {{#if products.hasNextPage}}
-        <a href="/?page={{products.nextPage}}">Siguiente</a>
+            <a href="/?page={{products.prevPage}}">Ant</a>
         {{/if}}
     </div>
-
+    <span>Pagina {{products.page}} de {{products.totalPages}}</span>
+    <div>
+        {{#if products.hasNextPage}}
+            <a href="/?page={{products.nextPage}}">Sig</a>
+        {{/if}}
+    </div>
 </div>

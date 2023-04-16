@@ -2,63 +2,65 @@ import { Router } from "express";
 import { UserModel } from "../dao/models/user.model.js";
 
 const AuthRouter = Router();
-const ADMIN_EMAIL = "adminCoder@coder.com";
 
-//register
-AuthRouter.post("/signup", async(req, res)=>{
-    try {
-        const { email, password } = req.body;
+//rutas de auth
+AuthRouter.post("/users/signup", async (req, res) => {
+  try {
+    const { email, password, last_name, first_name, age } = req.body;
+    const user = await UserModel.findOne({ email: email });
 
-        const user = await UserModel.findOne({ email });
-
-        if (user) {
-            return res.send(`El usuario ${email} ya está registrado <a href="/login">Iniciar sesión </a>`);
-        }
-
-        const newUser = await UserModel.create({ email, password });
-
-        req.session.user = newUser.email;
-        req.session.rol = email === ADMIN_EMAIL ? "admin" : "user";
-        console.log(req.session);
-
-        return res.redirect("/");
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send("Error interno del servidor");
+    if (!user) {
+      //si no existe el usuario lo registramos
+      const newUser = await UserModel.create({
+        email,
+        password,
+        age,
+        last_name,
+        first_name,
+      });
+      req.session.user = newUser.email;
+      return res.redirect("/products");
     }
+
+    //si ya existe enviamos un mensaje que el usuario ya existe
+    res.send(`Usuario ya registrado <a href="/">Incia sesion</a>`);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
-//login
-AuthRouter.post("/login", async (req,res) => {
-    try {
-        const { email, password } = req.body;
+AuthRouter.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await UserModel.findOne({ email: email });
+    
+    if (user) {
+      req.session.user = user.email;
 
-        const authorized = await UserModel.findOne({ email, password });
-
-        if (!authorized) {
-            return res.send("Usuario o contraseña incorrectos");
-        }
-
-        req.session.user = email;
-        req.session.rol = email === ADMIN_EMAIL ? "admin" : "user";
-        console.log(req.session);
-
-        return res.redirect("/");
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send("Error interno del servidor");
+      if (password == user.password) {
+        return res.redirect("/products");
+      } else {
+        res.send(`Contraseña incorrecta <a href="/">Intentar de nuevo</a>`);
+      }
+    } else {
+      //si no existe el usuario
+      if (!email) {
+        res.send(`Debe ingresar un correo electrónico <a href="/">Intentar de nuevo</a>`);
+      } else {
+        res.send(`Usuario no encontrado <a href="/users/registro">Registrarte</a>`);
+      }
     }
+  } catch (error) {
+    console.log(error);
+  }
 });
 
-//logOut
-AuthRouter.post("/logout", (req,res) =>{
-    req.session.destroy(error => {
-        if (error) {
-            return res.status(500).send("Error interno del servidor");
-        } else {
-            return res.redirect("/login");
-        }
-    });
+AuthRouter.get("/users/logout", (req, res) => {
+  req.session.destroy((error) => {
+    if (error) return res.send("La sesion no se pudo cerrar");
+    console.log("Session destroy");
+    res.redirect("/");
+  });
 });
 
-export {AuthRouter}
+export default AuthRouter;
