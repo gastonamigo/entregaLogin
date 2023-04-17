@@ -22,31 +22,48 @@ webRouter.get("/", async (req, response) => {
 
 webRouter.get("/products",/* authenticate, */async (req,res) =>{
   // 
-  const usuario = req.session.user;
-  let userDatos = await UserModel.findOne({ email: usuario });
-  let rol;
+  try {
+    const usuario = req.session.user;
+    const user = await UserModel.findOne({ email: usuario });
+    const { limit, page, sort } = req.query
+    const products = await manager.getProducts({limit, page, sort})
 
-  /* Verificar si es Admin o Usuario */
-  const emailEntrada = usuario
-  let email = emailEntrada.toLowerCase()
-  const isAdmin = /admin/.test(email);
-
-  if (isAdmin) {
-    rol = "Admin";
-  } else {
-    rol = "Usuario";
-  }
-  userDatos = { ...userDatos, rol };
-  const products = await productModel.paginate(
-    {},
-    {
-      limit: 5,
-      lean: true,
+    if (!user) {
+      return res.redirect("/login");
     }
-  );
 
-  res.render("products", { products, userDatos });
-})
+    const isAdmin = /admin/i.test(user.email);
+    user.rol = isAdmin ? "admin" : "user";
+    req.session.rol = user.rol;
+    res.render("products", { user, products });
+  } catch (error) {
+    res.status(500).send({ status: "error", error: `${error}` });
+  }
+//   const usuario = req.session.user;
+//   let userDatos = await UserModel.findOne({ email: usuario });
+//   let rol;
+
+//   /* Verificar si es Admin o Usuario */
+//   const emailEntrada = usuario
+//   let email = emailEntrada.toLowerCase()
+//   const isAdmin = /admin/.test(email);
+
+//   if (isAdmin) {
+//     rol = "Admin";
+//   } else {
+//     rol = "Usuario";
+//   }
+//   userDatos = { ...userDatos, rol };
+//   const products = await productModel.paginate(
+//     {},
+//     {
+//       limit: 5,
+//       lean: true,
+//     }
+//   );
+
+//   res.render("products", { products, userDatos });
+ })
 
 webRouter.get("/users/signup",(req,res)=>{
     res.render("registro");
@@ -74,4 +91,4 @@ webRouter.get("/users/profile", async (req, res) => {
     res.status(500).send({ status: "error", error: `${error}` });
   }
 });
-export default webRouter
+export default webRouter;

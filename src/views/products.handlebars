@@ -1,5 +1,19 @@
 
 <div>
+    <h1>profile</h1>
+<div>
+    <ul>
+        <li>Nombre: {{user._doc.first_name}}</li>
+        <li>Apellido: {{user._doc.last_name}}</li>
+        <li>Email: {{user._doc.email}}</li>
+        <li>Edad: {{user._doc.age}}</li>
+        <li>Rol: {{user.rol}}</li>
+    </ul>
+</div>
+<div>
+<form method="get" action="/api/sessions/users/logout">
+    <button type="submit">Cerrar Sesion</button>
+</form>
     <h1>Productos:</h1>
 
     <ul>
