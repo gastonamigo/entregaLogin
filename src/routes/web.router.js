@@ -11,17 +11,12 @@ webRouter.use(json());
 //     res.render("login");
 // });
 webRouter.get("/", async (req, response) => {
-  try {
-    const { limit, page, sort } = req.query
-    const products = await manager.getProducts({limit, page, sort})
-    response.render("home", { products });
-  } catch (error) {
-    response.status(500).send({ status: "error", error: `${error}` });
-  }
+     response.render("login");
+ 
 });
 
 webRouter.get("/products",/* authenticate, */async (req,res) =>{
-  // 
+ 
   try {
     const usuario = req.session.user;
     const user = await UserModel.findOne({ email: usuario });
@@ -29,7 +24,7 @@ webRouter.get("/products",/* authenticate, */async (req,res) =>{
     const products = await manager.getProducts({limit, page, sort})
 
     if (!user) {
-      return res.redirect("/login");
+      return res.redirect("/users/login");
     }
 
     const isAdmin = /admin/i.test(user.email);
@@ -39,37 +34,13 @@ webRouter.get("/products",/* authenticate, */async (req,res) =>{
   } catch (error) {
     res.status(500).send({ status: "error", error: `${error}` });
   }
-//   const usuario = req.session.user;
-//   let userDatos = await UserModel.findOne({ email: usuario });
-//   let rol;
-
-//   /* Verificar si es Admin o Usuario */
-//   const emailEntrada = usuario
-//   let email = emailEntrada.toLowerCase()
-//   const isAdmin = /admin/.test(email);
-
-//   if (isAdmin) {
-//     rol = "Admin";
-//   } else {
-//     rol = "Usuario";
-//   }
-//   userDatos = { ...userDatos, rol };
-//   const products = await productModel.paginate(
-//     {},
-//     {
-//       limit: 5,
-//       lean: true,
-//     }
-//   );
-
-//   res.render("products", { products, userDatos });
  })
 
 webRouter.get("/users/signup",(req,res)=>{
     res.render("registro");
 });
 
-webRouter.get("/login",(req,res)=>{
+webRouter.get("/users/login",(req,res)=>{
     res.render("login");
 });
 
@@ -80,7 +51,7 @@ webRouter.get("/users/profile", async (req, res) => {
     const user = await UserModel.findOne({ email: usuario });
 
     if (!user) {
-      return res.redirect("/login");
+      return res.redirect("/users/login");
     }
 
     const isAdmin = /admin/i.test(user.email);
@@ -91,4 +62,5 @@ webRouter.get("/users/profile", async (req, res) => {
     res.status(500).send({ status: "error", error: `${error}` });
   }
 });
+
 export default webRouter;
