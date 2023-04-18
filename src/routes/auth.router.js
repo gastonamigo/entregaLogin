@@ -1,5 +1,8 @@
 import { Router } from "express";
 import { UserModel } from "../dao/models/user.model.js";
+import passport from "passport";
+import { createHash, isValidPassword } from "../utils.js";
+
 
 const AuthRouter = Router();
 
@@ -19,7 +22,8 @@ AuthRouter.post("/users/signup", passport.authenticate("signupStrategy",{
   AuthRouter.get("/github-callback", passport.authenticate("githubSignup", {
       failureRedirect: "/api/sessions/failure-signup"
     }), (req, res) => {
-      res.send("Usuario autenticado");
+        res.send("Usuario autenticado");
+      
     }
   );
 

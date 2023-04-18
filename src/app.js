@@ -13,7 +13,8 @@ import session from "express-session";
 import MongoStore from "connect-mongo";
 import AuthRouter from "./routes/auth.router.js";
 import cookieParser from "cookie-parser";
-import bodyParser from "body-parser";
+import passport from "passport";
+import { initializedPassport } from "./config/passport.config.js";
 
 
 const manager = new ProductManager();
@@ -39,6 +40,9 @@ app.use (session({
     saveUninitialized: true
 }));
 
+initializedPassport()
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.use(express.static(__dirname + '/../public'));
 
