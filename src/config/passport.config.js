@@ -2,7 +2,7 @@ import passport from "passport";
 import LocalStrategy from "passport-local";
 import GithubStrategy from "passport-github2";
 import { UserModel } from "../dao/models/user.model.js";
-import { createHash, isValidPassword } from "../utils.js";
+import { createHash } from "../utils.js";
 
 const initializedPassport = ()=>{
     passport.use("signupStrategy",new LocalStrategy(
@@ -12,16 +12,17 @@ const initializedPassport = ()=>{
         },
         async(req,username, password, done)=>{
             try {
-                const {name,age} = req.body;
+                const { email, password, last_name, first_name, age } = req.body;
                 const user = await UserModel.findOne({email:username});
                 if(user){
                     return done(null,false)
                 }
                 //si no existe en la db
                 const newUser ={
-                    name,
+                    last_name,
+                    first_name,
                     age,
-                    email:username,
+                    email: username,
                     password:createHash(password)
                 };
                 const userCreated = await UserModel.create(newUser);
